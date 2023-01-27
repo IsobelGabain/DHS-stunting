@@ -1,0 +1,28 @@
+library(ggplot2)
+library(rdhs)
+devtools::install_github("ropensci/rdhs")
+#set up credentials
+library(rdhs)
+## set up your credentials
+set_rdhs_config(email = "igabain19@rvc.ac.uk",
+                project = "Does maternal deworming improve stunting and anaemia outcomes in their offspring?")
+1
+## set up my credentials
+set_rdhs_config(email = "igabain19@rvc.ac.uk",
+                project = "Does maternal deworming improve stunting and anaemia outcomes in their offspring?",
+                config_path = "rdhs.json",
+                config_path = "~/.rdhs.json",
+                global = TRUE)
+
+## view country IDs
+view(ids)
+
+## what are the indicators
+indicators <- dhs_indicators()
+indicators[1,]
+
+# What are the tags
+tags <- dhs_tags()
+
+# View the tags that relate to anemia
+tags[grepl("Anemia", tags$TagName), ]
