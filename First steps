@@ -26,3 +26,12 @@ tags <- dhs_tags()
 
 # View the tags that relate to anemia
 tags[grepl("Anemia", tags$TagName), ]
+
+# query country names and 2-letter codes          
+dhs_countries(returnFields = c("CountryName", "DHS_CountryCode"))
+
+# request data on any anemia in women in India, Indonesia and Senegal                
+resp <- dhs_data(indicatorIds = "AN_ANEM_W_ANY",    
+                 countryIds = c("SN","IA","ID"),
+                 surveyYearStart = 2000,            
+                 breakdown = "subnational") 
