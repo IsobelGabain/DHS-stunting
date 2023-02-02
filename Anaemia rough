@@ -1,0 +1,67 @@
+library(ggplot2)
+library(rdhs)
+library(devtools)
+library(usethis)
+
+# devtools::install_github("ropensci/rdhs")
+
+## set up my credentials
+set_rdhs_config(email = "igabain19@rvc.ac.uk",
+                project = "Does maternal deworming improve stunting and anaemia outcomes in their offspring?",
+                config_path = "~/.rdhs.json",
+                global = TRUE)
+
+getwd()
+
+## view country IDs
+ids <- dus_ids()
+
+## what are the indicators
+indicators <- dhs_indicators()
+indicators[1,]
+
+# What are the tags
+tags <- dhs_tags()
+
+# query country names and 2-letter codes          
+dhs_countries(returnFields = c("CountryName", "DHS_CountryCode"))
+
+dhs_surveys(returnFields=c("SurveyId", "SurveyYearLabel","SurveyType","CountryName"))
+
+options(max.print=1000000)
+
+dhs_indicators(returnFields=c("IndicatorId","Label","Definition"))
+
+# A common use for the countries API endpoint is to query which countries
+# ask questions about a given topic. For example to find all countries that
+# record data on malaria prevalence by RDT:
+
+dat <- dhs_countries(indicatorIds = "ML_PMAL_C_RDT")
+
+
+## devtools::install_github("ropensci/rdhs")
+library(rdhs)
+library(data.table)
+library(ggplot2)
+library(survey)
+library(haven)
+
+library(rdhs)
+set_rdhs_config(data_frame = "data.table::as.data.table")
+1
+
+indicators <- dhs_indicators()
+tail(indicators[grepl("anemia", Label), .(IndicatorId, ShortName, Label)])
+
+countries <- dhs_countries()
+dhscc <- countries[CountryName %in% c("Senegal", "India", "Indonesia"), DHS_CountryCode]
+dhscc    # indicates country code for queried countries 
+
+# query the indicators dataset for the women with anaemia in these three countries
+# any anaemia = mild, moderate or severe
+statcomp <- dhs_data(indicatorIds = "AN_ANEM_W_ANY", countryIds = dhscc)
+
+# plot
+ggplot(statcomp, aes(SurveyYear, Value, col=CountryName)) +
+  geom_point() + geom_line()
+statcomp[,.(Indicator, CountryName, SurveyYear, Value, DenominatorWeighted)]
