@@ -10,7 +10,6 @@ set_rdhs_config(email = "igabain19@rvc.ac.uk",
 ## set up my credentials
 set_rdhs_config(email = "igabain19@rvc.ac.uk",
                 project = "Does maternal deworming improve stunting and anaemia outcomes in their offspring?",
-                config_path = "rdhs.json",
                 config_path = "~/.rdhs.json",
                 global = TRUE)
 
