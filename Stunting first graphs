@@ -1,0 +1,93 @@
+library(ggplot2)
+library(rdhs)
+library(devtools)
+library(usethis)
+library(data.table)	
+library(ggplot2)	
+library(survey)	
+library(haven)
+
+set_rdhs_config(email = "igabain19@rvc.ac.uk",
+                project = "Does maternal deworming improve stunting and anaemia outcomes in their offspring?",
+                config_path = "~/.rdhs.json",
+                global = TRUE)
+
+
+dhs_surveys(returnFields=c("SurveyId", "SurveyYearLabel","SurveyType","CountryName"))
+
+malaria_prev_RDT <- dhs_countries(indicatorIds = "ML_PMAL_C_RDT")
+malaria_prev_RDT
+
+# which countries record: Percentage of women classified as having any anemia (<12.0 g/dl for non-pregnant women and <11.0 g/dl for pregnant women)
+maternal_anaemia <- dhs_countries(indicatorIds = "AN_ANEM_W_ANY")
+maternal_anaemia
+
+#which countries record: Percentage of children under age 5 classified as having any anemia
+child_5_anaemia <- dhs_countries(indicatorIds = "CN_ANMC_C_ANY")
+child_5_anaemia
+
+# Set the configuration settings for using rdhs package
+set_rdhs_config(data_frame = "data.table::as.data.table")
+
+# simplify by naming variable indicators
+indicators <- dhs_indicators()
+
+# query to find ID, short name, and label of any anaemia 
+tail(indicators[grepl("anemia", Label), .(IndicatorId, ShortName, Label)])
+
+# label India, Indonesia nd Senegal as dhscc
+countries <- dhs_countries()
+dhscc <- countries[CountryName %in% c("India", "Indonesia", "Senegal"), DHS_CountryCode]
+dhscc
+
+# query percentage of women classified as having any anemia in India, Indonesia and Senegal by year
+statcomp <- dhs_data(indicatorIds = "AN_ANEM_W_ANY", countryIds = dhscc)
+statcomp[,.(Indicator, CountryName, SurveyYear, Value, DenominatorWeighted)]
+# women in Indonesia not measured for this variable 
+
+# plot % women in India and Senegal with anemia
+ggplot(statcomp, aes(SurveyYear, Value, col=CountryName)) +
+  geom_point() + geom_line()
+
+
+# query number (raw) of children <5 classified as stunted in India, Indonesia and Senegal by year
+statcomp <- dhs_data(indicatorIds = "CN_NUTS_C_HAN", countryIds = dhscc)
+statcomp[,.(Indicator, CountryName, SurveyYear, Value, DenominatorWeighted)]
+# this isn't very useful
+
+# plot above
+ggplot(statcomp, aes(SurveyYear, Value, col=CountryName)) +
+  geom_point() + geom_line()
+# goes up for India because many more households surveyed 
+
+
+# query mean height for age z-score for children according to the WHO standard in India, Indonesia and Senegal
+statcomp <- dhs_data(indicatorIds = "CN_NUTS_C_HAM", countryIds = dhscc)
+statcomp[,.(Indicator, CountryName, SurveyYear, Value, DenominatorWeighted)]
+
+# plot above
+ggplot(statcomp, aes(SurveyYear, Value, col=CountryName)) +
+  geom_point() + geom_line()+
+  ggtitle("Mean height for age z-score for children according to the WHO standard")+
+  xlab("Survey year") + ylab("Mean HAZ")
+
+
+# query percentage of children stunted (below -2 SD of height for age according to the WHO standard in India, Indonesia and Senegal
+statcomp <- dhs_data(indicatorIds = "CN_NUTS_C_HA2", countryIds = dhscc)
+statcomp[,.(Indicator, CountryName, SurveyYear, Value, DenominatorWeighted)]
+
+# plot above
+ggplot(statcomp, aes(SurveyYear, Value, col=CountryName)) +
+  geom_point() + geom_line()+
+  ggtitle("Percentage of children stunted (below -2 SD of height for age according to the WHO standard")+
+  xlab("Survey year") + ylab("% HAZ below -2 SD")
+
+# query percentage of children severely stunted (below -3 SD of height for age according to the WHO standard in India, Indonesia and Senegal
+statcomp <- dhs_data(indicatorIds = "CN_NUTS_C_HA3", countryIds = dhscc)
+statcomp[,.(Indicator, CountryName, SurveyYear, Value, DenominatorWeighted)]
+
+# plot above
+ggplot(statcomp, aes(SurveyYear, Value, col=CountryName)) +
+  geom_point() + geom_line()+
+  ggtitle("Percentage of children severely stunted (below -3 SD of height for age according to the WHO standard")+
+  xlab("Survey year") + ylab("% HAZ below -3 SD")
