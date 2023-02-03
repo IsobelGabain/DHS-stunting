@@ -10,6 +10,9 @@ set_rdhs_config(email = "igabain19@rvc.ac.uk",
                 config_path = "~/.rdhs.json",
                 global = TRUE)
 
+# to print all rows
+options(max.print=1000000)
+
 ## view country IDs
 view(ids)
 
@@ -22,6 +25,12 @@ tags <- dhs_tags()
 
 # query country names and 2-letter codes          
 dhs_countries(returnFields = c("CountryName", "DHS_CountryCode"))
+
+#query survey IDs, year, survey type and country name
+dhs_surveys(returnFields=c("SurveyId", "SurveyYearLabel","SurveyType","CountryName"))
+
+# query indicator IDs, labels and definitions
+dhs_indicators(returnFields=c("IndicatorId","Label","Definition"))
 
 # query country codes for India, Indonesia and Senegal
 countries <- dhs_countries()
