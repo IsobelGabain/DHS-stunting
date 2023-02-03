@@ -3,10 +3,7 @@ library(rdhs)
 devtools::install_github("ropensci/rdhs")
 #set up credentials
 library(rdhs)
-## set up your credentials
-set_rdhs_config(email = "igabain19@rvc.ac.uk",
-                project = "Does maternal deworming improve stunting and anaemia outcomes in their offspring?")
-1
+
 ## set up my credentials
 set_rdhs_config(email = "igabain19@rvc.ac.uk",
                 project = "Does maternal deworming improve stunting and anaemia outcomes in their offspring?",
@@ -23,14 +20,12 @@ indicators[1,]
 # What are the tags
 tags <- dhs_tags()
 
-# View the tags that relate to anemia
-tags[grepl("Anemia", tags$TagName), ]
-
 # query country names and 2-letter codes          
 dhs_countries(returnFields = c("CountryName", "DHS_CountryCode"))
 
-# request data on any anemia in women in India, Indonesia and Senegal                
-resp <- dhs_data(indicatorIds = "AN_ANEM_W_ANY",    
-                 countryIds = c("SN","IA","ID"),
-                 surveyYearStart = 2000,            
-                 breakdown = "subnational") 
+# query country codes for India, Indonesia and Senegal
+countries <- dhs_countries()
+dhscc <- countries[CountryName %in% c("Senegal", "India", "Indonesia"), DHS_CountryCode]
+dhscc    # indicates country code for queried countries 
+
+
