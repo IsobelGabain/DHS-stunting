@@ -1,0 +1,42 @@
+
+# plot map of air pollution monitoring sites in NY
+library(bmstdr)
+library(ggsn)
+nymap <- map_data(database="state",regions="new york")
+p <- ggplot() +
+  geom_polygon(data=nymap, aes(x=long, y=lat, group=group),color="black", size = 0.6, fill=NA) +
+  geom_point(data =nyspatial, aes(x=Longitude,y=Latitude)) +
+  labs( title= "28 air pollution monitoring sites in New York", x="
+Longitude", y = "Latitude") +
+scalebar(data =nymap, dist = 100, location = "bottomleft", transform
+         =T, dist_unit = "km",
+         st.dist = .05, st.size = 5, height = .06, st.bottom=T,
+         model="WGS84") +
+  north(data=nymap, location="topleft", symbol=12)
+p
+
+install.packages("sf")
+install.packages("terra")
+install.packages("spData")
+install.packages("spDataLarge", repos = "https://nowosad.r-universe.dev")
+
+library(sf)          # classes and functions for vector data
+#> Linking to GEOS 3.10.2, GDAL 3.4.1, PROJ 8.2.1; sf_use_s2() is TRUE
+
+library(terra)      # classes and functions for raster data
+
+library(spData)        # load geographic data
+library(spDataLarge)   # load larger geographic data
+
+vignette(package = "sf") # see which vignettes are available
+vignette("sf1")          # an introduction to the package
+
+# Using world dataset (by spData) show what sf (common vector geometry types) are and how they work
+class(world)
+names(world)
+
+# plot()ing sf objects results in a separate map for each variable in the dataset
+plot(world)
+
+# provides summary stats for variables within the world object
+summary(world["lifeExp"])
